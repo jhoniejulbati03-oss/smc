@@ -1,0 +1,1866 @@
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRAC - Supply Chain Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d7377;
+            --primary-dark: #0a5c5f;
+            --primary-light: #14a2a8;
+            --accent: #ff6b6b;
+            --accent-light: #ff8787;
+            --success: #4ecdc4;
+            --warning: #f7b731;
+            --danger: #ee5a6f;
+            --bg-primary: #f8fafb;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8f4f5;
+            --text-primary: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --text-muted: #95a5a6;
+            --border: #d4e2e7;
+            --shadow: rgba(13, 115, 119, 0.08);
+            --shadow-strong: rgba(13, 115, 119, 0.15);
+        }
+
+        .dark {
+            --primary: #14a2a8;
+            --primary-dark: #0d7377;
+            --primary-light: #1fc4cc;
+            --accent: #ff6b6b;
+            --accent-light: #ff8787;
+            --success: #4ecdc4;
+            --warning: #f7b731;
+            --danger: #ee5a6f;
+            --bg-primary: #0f1419;
+            --bg-secondary: #1a1f2e;
+            --bg-tertiary: #232a3b;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b8bcc5;
+            --text-muted: #8b92a0;
+            --border: #2d3548;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-strong: rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px var(--shadow-strong);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: white;
+            color: var(--primary);
+            padding: 0.5rem;
+            border-radius: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border);
+            box-shadow: 0 2px 10px var(--shadow);
+            position: sticky;
+            top: 84px;
+            z-index: 999;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .nav-list {
+            display: flex;
+            list-style: none;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+        }
+
+        .nav-list::-webkit-scrollbar {
+            height: 3px;
+        }
+
+        .nav-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .nav-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .nav-item {
+            white-space: nowrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+            background: var(--bg-tertiary);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--bg-tertiary);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title i {
+            color: var(--primary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--stat-color, var(--primary));
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--stat-color, var(--primary));
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            color: var(--success);
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow-strong);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d63447;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #3db5ad;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+        }
+
+        thead {
+            background: var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(78, 205, 196, 0.15);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(247, 183, 49, 0.15);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(238, 90, 111, 0.15);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: rgba(13, 115, 119, 0.15);
+            color: var(--primary);
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            padding-left: 3rem;
+            width: 100%;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px var(--shadow-strong);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        /* Action buttons in table */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--primary);
+        }
+
+        .icon-btn.delete:hover {
+            color: var(--danger);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+
+            .nav {
+                top: auto;
+                position: relative;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Low stock indicator */
+        .low-stock {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .adequate-stock {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quick-action {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px var(--shadow-strong);
+        }
+
+        .quick-action i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .quick-action span {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-boxes"></i>
+                <div>
+                    <div>TRAC</div>
+                    <div style="font-size: 0.5em; font-weight: 400; opacity: 0.9;">Supply Chain Management</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark Mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Admin User</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showSection('dashboard')">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('inventory')">
+                        <i class="fas fa-warehouse"></i>
+                        <span>Inventory</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('requests')">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Requests</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('approvals')">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Approvals</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showSection('reports')">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="stats-grid">
+                <div class="stat-card" style="--stat-color: #0d7377;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Total Items</div>
+                            <div class="stat-value" id="stat-total-items">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-boxes"></i></div>
+                    </div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i> Active inventory
+                    </div>
+                </div>
+                <div class="stat-card" style="--stat-color: #ee5a6f;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Low Stock Items</div>
+                            <div class="stat-value" id="stat-low-stock">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    </div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down"></i> Needs attention
+                    </div>
+                </div>
+                <div class="stat-card" style="--stat-color: #f7b731;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Pending Requests</div>
+                            <div class="stat-value" id="stat-pending-requests">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    </div>
+                    <div class="stat-change">
+                        <i class="fas fa-hourglass-half"></i> Awaiting action
+                    </div>
+                </div>
+                <div class="stat-card" style="--stat-color: #4ecdc4;">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Approved This Month</div>
+                            <div class="stat-value" id="stat-approved">0</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-check"></i></div>
+                    </div>
+                    <div class="stat-change">
+                        <i class="fas fa-calendar-check"></i> This month
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <div class="quick-action" onclick="openAddItemModal()">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add New Item</span>
+                </div>
+                <div class="quick-action" onclick="openNewRequestModal()">
+                    <i class="fas fa-file-alt"></i>
+                    <span>New Request</span>
+                </div>
+                <div class="quick-action" onclick="showSection('approvals')">
+                    <i class="fas fa-tasks"></i>
+                    <span>Review Approvals</span>
+                </div>
+                <div class="quick-action" onclick="showSection('reports')">
+                    <i class="fas fa-download"></i>
+                    <span>Generate Report</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-chart-line"></i>
+                        Recent Activity
+                    </div>
+                </div>
+                <div id="recent-activity">
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <p>No recent activity</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inventory Section -->
+        <section id="inventory" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-warehouse"></i>
+                        Inventory Management
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddItemModal()">
+                        <i class="fas fa-plus"></i>
+                        Add Item
+                    </button>
+                </div>
+
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="inventory-search" placeholder="Search inventory..." onkeyup="filterInventory()">
+                </div>
+
+                <div class="filters">
+                    <div class="filter-group">
+                        <select id="category-filter" onchange="filterInventory()">
+                            <option value="">All Categories</option>
+                            <option value="Office Supplies">Office Supplies</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Laboratory Equipment">Laboratory Equipment</option>
+                            <option value="Cleaning Supplies">Cleaning Supplies</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select id="stock-filter" onchange="filterInventory()">
+                            <option value="">All Stock Levels</option>
+                            <option value="low">Low Stock Only</option>
+                            <option value="adequate">Adequate Stock</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item Code</th>
+                                <th>Item Name</th>
+                                <th>Category</th>
+                                <th>Quantity</th>
+                                <th>Unit</th>
+                                <th>Min. Stock</th>
+                                <th>Location</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body">
+                            <tr>
+                                <td colspan="9">
+                                    <div class="empty-state">
+                                        <i class="fas fa-box-open"></i>
+                                        <p>No items in inventory. Click "Add Item" to get started.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Requests Section -->
+        <section id="requests" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        Supply Requests
+                    </div>
+                    <button class="btn btn-primary" onclick="openNewRequestModal()">
+                        <i class="fas fa-plus"></i>
+                        New Request
+                    </button>
+                </div>
+
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="request-search" placeholder="Search requests..." onkeyup="filterRequests()">
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Date</th>
+                                <th>Department</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Requested By</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="requests-table-body">
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <i class="fas fa-clipboard"></i>
+                                        <p>No requests found. Create your first request.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Approvals Section -->
+        <section id="approvals" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-check-circle"></i>
+                        Pending Approvals
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Date</th>
+                                <th>Department</th>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Requested By</th>
+                                <th>Priority</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approvals-table-body">
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state">
+                                        <i class="fas fa-check-double"></i>
+                                        <p>No pending approvals</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Reports & Analytics
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Report Type</label>
+                        <select id="report-type">
+                            <option value="inventory">Inventory Report</option>
+                            <option value="requests">Requests Report</option>
+                            <option value="low-stock">Low Stock Report</option>
+                            <option value="department">Department Summary</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date From</label>
+                        <input type="date" id="report-date-from">
+                    </div>
+                    <div class="form-group">
+                        <label>Date To</label>
+                        <input type="date" id="report-date-to">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" onclick="generateReport()">
+                            <i class="fas fa-file-download"></i>
+                            Generate Report
+                        </button>
+                    </div>
+                </div>
+
+                <div id="report-output" style="margin-top: 2rem;"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="item-modal-title">Add New Item</h2>
+                <button class="modal-close" onclick="closeModal('item-modal')">&times;</button>
+            </div>
+            <form id="item-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Item Code *</label>
+                        <input type="text" id="item-code" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Item Name *</label>
+                        <input type="text" id="item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="item-category" required>
+                            <option value="">Select Category</option>
+                            <option value="Office Supplies">Office Supplies</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Laboratory Equipment">Laboratory Equipment</option>
+                            <option value="Cleaning Supplies">Cleaning Supplies</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity *</label>
+                        <input type="number" id="item-quantity" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Unit *</label>
+                        <input type="text" id="item-unit" placeholder="e.g., pcs, box, kg" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Stock Level *</label>
+                        <input type="number" id="item-min-stock" min="0" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Location *</label>
+                        <input type="text" id="item-location" placeholder="e.g., Storage Room A, Shelf 3" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Description</label>
+                        <textarea id="item-description" placeholder="Optional item description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('item-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Save Item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Request Modal -->
+    <div id="request-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">New Supply Request</h2>
+                <button class="modal-close" onclick="closeModal('request-modal')">&times;</button>
+            </div>
+            <form id="request-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Department *</label>
+                        <select id="request-department" required>
+                            <option value="">Select Department</option>
+                            <option value="Administration">Administration</option>
+                            <option value="Academic Affairs">Academic Affairs</option>
+                            <option value="IT Department">IT Department</option>
+                            <option value="Facilities">Facilities</option>
+                            <option value="Library">Library</option>
+                            <option value="Laboratory">Laboratory</option>
+                            <option value="Student Services">Student Services</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Item *</label>
+                        <select id="request-item" required>
+                            <option value="">Select Item</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity Requested *</label>
+                        <input type="number" id="request-quantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority *</label>
+                        <select id="request-priority" required>
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Requested By *</label>
+                        <input type="text" id="request-by" placeholder="Your name" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Purpose/Justification *</label>
+                        <textarea id="request-purpose" placeholder="Explain why you need this item..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('request-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Dialog -->
+    <div id="confirm-dialog" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirm Action</h2>
+                <button class="modal-close" onclick="closeConfirmDialog()">&times;</button>
+            </div>
+            <p id="confirm-message" style="margin-bottom: 2rem; color: var(--text-secondary);"></p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeConfirmDialog()">Cancel</button>
+                <button class="btn btn-danger" id="confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Toggle theme
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            const icon = document.querySelector('.theme-toggle i');
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        // Data storage (in-memory for iframe environment)
+        let inventory = [];
+        let requests = [];
+        let editingItemIndex = null;
+
+        // Save data
+        function saveData() {
+            // Data is stored in memory during the session
+            updateStats();
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.nav-link').classList.add('active');
+
+            if (sectionId === 'inventory') {
+                renderInventory();
+            } else if (sectionId === 'requests') {
+                renderRequests();
+            } else if (sectionId === 'approvals') {
+                renderApprovals();
+            } else if (sectionId === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const totalItems = inventory.length;
+            const lowStock = inventory.filter(item => item.quantity <= item.minStock).length;
+            const pendingRequests = requests.filter(r => r.status === 'Pending').length;
+            const approved = requests.filter(r => r.status === 'Approved' && isThisMonth(r.date)).length;
+
+            document.getElementById('stat-total-items').textContent = totalItems;
+            document.getElementById('stat-low-stock').textContent = lowStock;
+            document.getElementById('stat-pending-requests').textContent = pendingRequests;
+            document.getElementById('stat-approved').textContent = approved;
+        }
+
+        function isThisMonth(dateStr) {
+            const date = new Date(dateStr);
+            const now = new Date();
+            return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+        }
+
+        // Modal management
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'item-modal') {
+                document.getElementById('item-form').reset();
+                editingItemIndex = null;
+                document.getElementById('item-modal-title').textContent = 'Add New Item';
+            }
+            if (modalId === 'request-modal') {
+                document.getElementById('request-form').reset();
+            }
+        }
+
+        function openAddItemModal() {
+            editingItemIndex = null;
+            document.getElementById('item-modal-title').textContent = 'Add New Item';
+            document.getElementById('item-form').reset();
+            openModal('item-modal');
+        }
+
+        function openEditItemModal(index) {
+            editingItemIndex = index;
+            const item = inventory[index];
+            document.getElementById('item-modal-title').textContent = 'Edit Item';
+            document.getElementById('item-code').value = item.code;
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-category').value = item.category;
+            document.getElementById('item-quantity').value = item.quantity;
+            document.getElementById('item-unit').value = item.unit;
+            document.getElementById('item-min-stock').value = item.minStock;
+            document.getElementById('item-location').value = item.location;
+            document.getElementById('item-description').value = item.description || '';
+            openModal('item-modal');
+        }
+
+        function openNewRequestModal() {
+            // Populate item dropdown
+            const itemSelect = document.getElementById('request-item');
+            itemSelect.innerHTML = '<option value="">Select Item</option>';
+            inventory.forEach((item, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${item.name} (Available: ${item.quantity} ${item.unit})`;
+                itemSelect.appendChild(option);
+            });
+            openModal('request-modal');
+        }
+
+        // Confirm dialog
+        let confirmCallback = null;
+
+        function showConfirmDialog(message, callback) {
+            document.getElementById('confirm-message').textContent = message;
+            confirmCallback = callback;
+            openModal('confirm-dialog');
+        }
+
+        function closeConfirmDialog() {
+            closeModal('confirm-dialog');
+            confirmCallback = null;
+        }
+
+        document.getElementById('confirm-btn').addEventListener('click', () => {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            closeConfirmDialog();
+        });
+
+        // Item form submit
+        document.getElementById('item-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const item = {
+                code: document.getElementById('item-code').value,
+                name: document.getElementById('item-name').value,
+                category: document.getElementById('item-category').value,
+                quantity: parseInt(document.getElementById('item-quantity').value),
+                unit: document.getElementById('item-unit').value,
+                minStock: parseInt(document.getElementById('item-min-stock').value),
+                location: document.getElementById('item-location').value,
+                description: document.getElementById('item-description').value,
+                lastUpdated: new Date().toISOString()
+            };
+
+            if (editingItemIndex !== null) {
+                inventory[editingItemIndex] = item;
+            } else {
+                inventory.push(item);
+            }
+
+            saveData();
+            renderInventory();
+            closeModal('item-modal');
+        });
+
+        // Request form submit
+        document.getElementById('request-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const itemIndex = document.getElementById('request-item').value;
+            const item = inventory[itemIndex];
+
+            const request = {
+                id: 'REQ-' + Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                department: document.getElementById('request-department').value,
+                itemName: item.name,
+                itemCode: item.code,
+                quantity: parseInt(document.getElementById('request-quantity').value),
+                requestedBy: document.getElementById('request-by').value,
+                purpose: document.getElementById('request-purpose').value,
+                priority: document.getElementById('request-priority').value,
+                status: 'Pending'
+            };
+
+            requests.push(request);
+            saveData();
+            renderRequests();
+            closeModal('request-modal');
+        });
+
+        // Render inventory
+        function renderInventory() {
+            const tbody = document.getElementById('inventory-table-body');
+
+            if (inventory.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <p>No items in inventory. Click "Add Item" to get started.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = inventory.map((item, index) => {
+                const isLowStock = item.quantity <= item.minStock;
+                const stockClass = isLowStock ? 'low-stock' : 'adequate-stock';
+                const statusBadge = isLowStock ?
+                    '<span class="badge badge-danger">Low Stock</span>' :
+                    '<span class="badge badge-success">In Stock</span>';
+
+                return `
+                    <tr>
+                        <td><strong>${item.code}</strong></td>
+                        <td>${item.name}</td>
+                        <td>${item.category}</td>
+                        <td class="${stockClass}">${item.quantity}</td>
+                        <td>${item.unit}</td>
+                        <td>${item.minStock}</td>
+                        <td>${item.location}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="icon-btn" onclick="openEditItemModal(${index})" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="icon-btn delete" onclick="deleteItem(${index})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter inventory
+        function filterInventory() {
+            const searchTerm = document.getElementById('inventory-search').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const stockFilter = document.getElementById('stock-filter').value;
+
+            const rows = document.querySelectorAll('#inventory-table-body tr');
+
+            inventory.forEach((item, index) => {
+                const row = rows[index];
+                if (!row) return;
+
+                const matchesSearch = item.name.toLowerCase().includes(searchTerm) ||
+                                    item.code.toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || item.category === categoryFilter;
+                const matchesStock = !stockFilter ||
+                                   (stockFilter === 'low' && item.quantity <= item.minStock) ||
+                                   (stockFilter === 'adequate' && item.quantity > item.minStock);
+
+                row.style.display = matchesSearch && matchesCategory && matchesStock ? '' : 'none';
+            });
+        }
+
+        // Delete item
+        function deleteItem(index) {
+            showConfirmDialog('Are you sure you want to delete this item?', () => {
+                inventory.splice(index, 1);
+                saveData();
+                renderInventory();
+            });
+        }
+
+        // Render requests
+        function renderRequests() {
+            const tbody = document.getElementById('requests-table-body');
+
+            if (requests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-clipboard"></i>
+                                <p>No requests found. Create your first request.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = requests.map((req, index) => {
+                const statusBadge = req.status === 'Pending' ?
+                    '<span class="badge badge-warning">Pending</span>' :
+                    req.status === 'Approved' ?
+                    '<span class="badge badge-success">Approved</span>' :
+                    '<span class="badge badge-danger">Rejected</span>';
+
+                return `
+                    <tr>
+                        <td><strong>${req.id}</strong></td>
+                        <td>${req.date}</td>
+                        <td>${req.department}</td>
+                        <td>${req.itemName}</td>
+                        <td>${req.quantity}</td>
+                        <td>${req.requestedBy}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-buttons">
+                                ${req.status === 'Pending' ? `
+                                    <button class="icon-btn delete" onclick="cancelRequest(${index})" title="Cancel">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter requests
+        function filterRequests() {
+            const searchTerm = document.getElementById('request-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#requests-table-body tr');
+
+            requests.forEach((req, index) => {
+                const row = rows[index];
+                if (!row) return;
+
+                const matchesSearch = req.id.toLowerCase().includes(searchTerm) ||
+                                    req.department.toLowerCase().includes(searchTerm) ||
+                                    req.itemName.toLowerCase().includes(searchTerm) ||
+                                    req.requestedBy.toLowerCase().includes(searchTerm);
+
+                row.style.display = matchesSearch ? '' : 'none';
+            });
+        }
+
+        // Cancel request
+        function cancelRequest(index) {
+            showConfirmDialog('Are you sure you want to cancel this request?', () => {
+                requests.splice(index, 1);
+                saveData();
+                renderRequests();
+            });
+        }
+
+        // Render approvals
+        function renderApprovals() {
+            const tbody = document.getElementById('approvals-table-body');
+            const pendingRequests = requests.filter(r => r.status === 'Pending');
+
+            if (pendingRequests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="fas fa-check-double"></i>
+                                <p>No pending approvals</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = pendingRequests.map(req => {
+                const priorityBadge = req.priority === 'Urgent' ?
+                    '<span class="badge badge-danger">Urgent</span>' :
+                    req.priority === 'High' ?
+                    '<span class="badge badge-warning">High</span>' :
+                    req.priority === 'Medium' ?
+                    '<span class="badge badge-info">Medium</span>' :
+                    '<span class="badge badge-success">Low</span>';
+
+                return `
+                    <tr>
+                        <td><strong>${req.id}</strong></td>
+                        <td>${req.date}</td>
+                        <td>${req.department}</td>
+                        <td>${req.itemName}</td>
+                        <td>${req.quantity}</td>
+                        <td>${req.requestedBy}</td>
+                        <td>${priorityBadge}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-success btn-sm" onclick="approveRequest('${req.id}')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectRequest('${req.id}')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Approve request
+        function approveRequest(requestId) {
+            showConfirmDialog('Are you sure you want to approve this request?', () => {
+                const request = requests.find(r => r.id === requestId);
+                if (request) {
+                    request.status = 'Approved';
+                    saveData();
+                    renderApprovals();
+                    renderRequests();
+                }
+            });
+        }
+
+        // Reject request
+        function rejectRequest(requestId) {
+            showConfirmDialog('Are you sure you want to reject this request?', () => {
+                const request = requests.find(r => r.id === requestId);
+                if (request) {
+                    request.status = 'Rejected';
+                    saveData();
+                    renderApprovals();
+                    renderRequests();
+                }
+            });
+        }
+
+        // Render dashboard
+        function renderDashboard() {
+            const activityDiv = document.getElementById('recent-activity');
+            const recentRequests = requests.slice(-5).reverse();
+
+            if (recentRequests.length === 0) {
+                activityDiv.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <p>No recent activity</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activityDiv.innerHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Item</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${recentRequests.map(req => {
+                                const statusBadge = req.status === 'Pending' ?
+                                    '<span class="badge badge-warning">Pending</span>' :
+                                    req.status === 'Approved' ?
+                                    '<span class="badge badge-success">Approved</span>' :
+                                    '<span class="badge badge-danger">Rejected</span>';
+
+                                return `
+                                    <tr>
+                                        <td><strong>${req.id}</strong></td>
+                                        <td>${req.itemName}</td>
+                                        <td>${req.department}</td>
+                                        <td>${statusBadge}</td>
+                                        <td>${req.date}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Generate report
+        function generateReport() {
+            const reportType = document.getElementById('report-type').value;
+            const dateFrom = document.getElementById('report-date-from').value;
+            const dateTo = document.getElementById('report-date-to').value;
+            const outputDiv = document.getElementById('report-output');
+
+            let reportData = [];
+            let title = '';
+
+            switch(reportType) {
+                case 'inventory':
+                    reportData = inventory;
+                    title = 'Inventory Report';
+                    break;
+                case 'requests':
+                    reportData = requests.filter(r => {
+                        if (!dateFrom || !dateTo) return true;
+                        return r.date >= dateFrom && r.date <= dateTo;
+                    });
+                    title = 'Requests Report';
+                    break;
+                case 'low-stock':
+                    reportData = inventory.filter(item => item.quantity <= item.minStock);
+                    title = 'Low Stock Report';
+                    break;
+                case 'department':
+                    const deptSummary = {};
+                    requests.forEach(req => {
+                        if (!deptSummary[req.department]) {
+                            deptSummary[req.department] = { total: 0, approved: 0, pending: 0, rejected: 0 };
+                        }
+                        deptSummary[req.department].total++;
+                        deptSummary[req.department][req.status.toLowerCase()]++;
+                    });
+                    reportData = Object.entries(deptSummary).map(([dept, stats]) => ({
+                        department: dept,
+                        ...stats
+                    }));
+                    title = 'Department Summary Report';
+                    break;
+            }
+
+            outputDiv.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">${title}</div>
+                        <button class="btn btn-primary" onclick="exportReport()">
+                            <i class="fas fa-download"></i>
+                            Export CSV
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    ${getReportHeaders(reportType)}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${reportData.length > 0 ? reportData.map(item => getReportRow(item, reportType)).join('') :
+                                    '<tr><td colspan="10"><div class="empty-state"><i class="fas fa-file"></i><p>No data for this report</p></div></td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getReportHeaders(reportType) {
+            switch(reportType) {
+                case 'inventory':
+                case 'low-stock':
+                    return '<th>Code</th><th>Name</th><th>Category</th><th>Quantity</th><th>Unit</th><th>Min Stock</th><th>Location</th>';
+                case 'requests':
+                    return '<th>ID</th><th>Date</th><th>Department</th><th>Item</th><th>Quantity</th><th>Requested By</th><th>Status</th>';
+                case 'department':
+                    return '<th>Department</th><th>Total Requests</th><th>Approved</th><th>Pending</th><th>Rejected</th>';
+                default:
+                    return '';
+            }
+        }
+
+        function getReportRow(item, reportType) {
+            switch(reportType) {
+                case 'inventory':
+                case 'low-stock':
+                    return `<tr>
+                        <td>${item.code}</td>
+                        <td>${item.name}</td>
+                        <td>${item.category}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.unit}</td>
+                        <td>${item.minStock}</td>
+                        <td>${item.location}</td>
+                    </tr>`;
+                case 'requests':
+                    return `<tr>
+                        <td>${item.id}</td>
+                        <td>${item.date}</td>
+                        <td>${item.department}</td>
+                        <td>${item.itemName}</td>
+                        <td>${item.quantity}</td>
+                        <td>${item.requestedBy}</td>
+                        <td><span class="badge badge-${item.status === 'Approved' ? 'success' : item.status === 'Pending' ? 'warning' : 'danger'}">${item.status}</span></td>
+                    </tr>`;
+                case 'department':
+                    return `<tr>
+                        <td>${item.department}</td>
+                        <td>${item.total}</td>
+                        <td>${item.approved || 0}</td>
+                        <td>${item.pending || 0}</td>
+                        <td>${item.rejected || 0}</td>
+                    </tr>`;
+                default:
+                    return '';
+            }
+        }
+
+        function exportReport() {
+            const reportType = document.getElementById('report-type').value;
+            let csvContent = '';
+            let filename = '';
+
+            switch(reportType) {
+                case 'inventory':
+                    filename = 'inventory_report.csv';
+                    csvContent = 'Code,Name,Category,Quantity,Unit,Min Stock,Location\n';
+                    csvContent += inventory.map(item =>
+                        `${item.code},${item.name},${item.category},${item.quantity},${item.unit},${item.minStock},${item.location}`
+                    ).join('\n');
+                    break;
+                case 'low-stock':
+                    filename = 'low_stock_report.csv';
+                    const lowStockItems = inventory.filter(item => item.quantity <= item.minStock);
+                    csvContent = 'Code,Name,Category,Quantity,Unit,Min Stock,Location\n';
+                    csvContent += lowStockItems.map(item =>
+                        `${item.code},${item.name},${item.category},${item.quantity},${item.unit},${item.minStock},${item.location}`
+                    ).join('\n');
+                    break;
+                case 'requests':
+                    filename = 'requests_report.csv';
+                    csvContent = 'ID,Date,Department,Item,Quantity,Requested By,Status\n';
+                    csvContent += requests.map(req =>
+                        `${req.id},${req.date},${req.department},${req.itemName},${req.quantity},${req.requestedBy},${req.status}`
+                    ).join('\n');
+                    break;
+            }
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize app
+        function init() {
+            updateStats();
+            renderDashboard();
+
+            // Set default dates for reports
+            const today = new Date().toISOString().split('T')[0];
+            const lastMonth = new Date();
+            lastMonth.setMonth(lastMonth.getMonth() - 1);
+            document.getElementById('report-date-to').value = today;
+            document.getElementById('report-date-from').value = lastMonth.toISOString().split('T')[0];
+        }
+
+        // Run on load
+        init();
+    </script>
+</body>
+</html>
